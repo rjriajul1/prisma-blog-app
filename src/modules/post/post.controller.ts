@@ -3,7 +3,12 @@ import { postService } from "./post.service";
 
 const createPost = async (req:Request, res:Response) => {
   try{
-    const result = await postService.createPost(req.body)
+      if(!req.user){
+      return res.status(400).json({
+        error: "Post creation failed"
+    })
+      }
+    const result = await postService.createPost(req.body, req.user.id as string)
     res.status(201).json(result)
   }catch(e){
     res.status(400).json({
@@ -15,8 +20,8 @@ const createPost = async (req:Request, res:Response) => {
 
 
 const getAllPost = async (req:Request, res: Response) => {
+  try{
 
-    try{
    const result = await postService.getAllPost()
    res.status(200).json({
     success: true,
